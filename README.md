@@ -29,3 +29,5 @@ Open your terminal and run:
 
 ```bash
 pip install flask python-docx pymupdf unicodeconverter
+
+![image](https://github.com/user-attachments/assets/646ccdc0-5526-45ff-be18-1932f7e07671)
