@@ -28,6 +28,12 @@ This is a simple Python web application that lets you convert Bangla PDFs (with 
 Open your terminal and run:
 
 ```bash
-pip install flask python-docx pymupdf unicodeconverter
+pip install flask python-docx pymupdf unicodeconverte
+
+```
+
+Webpage view
 
 ![image](https://github.com/user-attachments/assets/646ccdc0-5526-45ff-be18-1932f7e07671)
+
+
