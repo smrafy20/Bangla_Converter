@@ -11,18 +11,38 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 def extract_text_from_pdf(pdf_path):
-    text = ""
+    text_content = []
     doc = fitz.open(pdf_path)
-    for page in doc:
-        text += page.get_text()
-    return text
+    for page_num in range(len(doc)):
+        page = doc[page_num]
+        text = page.get_text()
+        if text:
+            unicode_text = unicodeconverter.convert_bijoy_to_unicode(text)
+            full_text = unicode_text + "\n"
+            text_content.append(full_text)
+        else:
+            text_content.append(f"No text found.\n")
+    doc.close()
+    return text_content
 
 def convert_bijoy_pdf_to_unicode_docx(pdf_path, output_docx_path):
-    bijoy_text = extract_text_from_pdf(pdf_path)
-    unicode_text = unicodeconverter.convert_bijoy_to_unicode(bijoy_text)
+    # Extract text with proper page separation
+    text_content = extract_text_from_pdf(pdf_path)
+    
+    # Create and format Word document
     document = Document()
-    for line in unicode_text.splitlines():
-        document.add_paragraph(line)
+    
+    # Add content page by page with proper formatting
+    for page_num, page_text in enumerate(text_content):
+        # Add page header
+        document.add_heading(f"Page {page_num + 1}", level=2)
+        
+        # Add page content
+        document.add_paragraph(page_text)
+        
+        # Add page break between pages
+        document.add_page_break()
+    
     document.save(output_docx_path)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -39,7 +59,7 @@ def upload_file():
             pdf_path = os.path.join(UPLOAD_FOLDER, pdf_filename)
             file.save(pdf_path)
 
-            # Create output .docx filename with the same name as input (just change extension)
+            # Create output .docx filename
             base_filename = os.path.splitext(pdf_filename)[0]
             docx_filename = base_filename + '.docx'
             docx_path = os.path.join(OUTPUT_FOLDER, docx_filename)
